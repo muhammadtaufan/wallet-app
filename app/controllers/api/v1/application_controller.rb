@@ -6,7 +6,7 @@ class Api::V1::ApplicationController < ActionController::API
 
   def authenticate_user
     token = auth_token
-    @current_user = User.find_by(auth_token: token)
+    @current_user = User.find_by(token: token)
 
     render json: { error: 'Not authenticated or invalid token' }, status: :unauthorized unless @current_user
   end

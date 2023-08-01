@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Walletable
+
   has_secure_password
   has_one :wallet, as: :walletable
   before_create :generate_token
