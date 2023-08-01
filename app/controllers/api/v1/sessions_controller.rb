@@ -6,7 +6,7 @@ class Api::V1::SessionsController < Api::V1::ApplicationController
     if user&.authenticate(params[:password])
       user.generate_token
       user.save!
-      render json: { status: 'OK', message: 'Sign in successful', token: user.token }
+      render json: { status: 'success', message: 'Sign in successful', token: user.token }
     else
       render json: { status: 'error', message: 'Invalid email or password' }, status: :unauthorized
     end
@@ -14,6 +14,6 @@ class Api::V1::SessionsController < Api::V1::ApplicationController
 
   def destroy
     @current_user.invalidate_auth_token
-    render json: { status: 'OK', message: 'Sign out successful' }
+    render json: { status: 'success', message: 'Sign out successful' }
   end
 end

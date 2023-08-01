@@ -31,4 +31,22 @@ class Wallet < ApplicationRecord
       raise ActiveRecord::Rollback
     end
   end
+
+  def transfer(target_wallet_id, amount)
+    with_lock do
+      if balance < amount
+        errors.add(:base, 'Insufficient balance')
+        return false
+      end
+
+      target_wallet = Wallet.find(target_wallet_id)
+      ActiveRecord::Base.transaction do
+        debit_transactions.create!(amount: amount, target_wallet: target_wallet)
+        target_wallet.credit_transactions.create!(amount: amount, source_wallet: self)
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      errors.add(:base, "Failed to transfer: #{e.message}")
+      raise ActiveRecord::Rollback
+    end
+  end
 end

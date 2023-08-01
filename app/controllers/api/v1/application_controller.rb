@@ -8,11 +8,14 @@ class Api::V1::ApplicationController < ActionController::API
     token = auth_token
     @current_user = User.find_by(token: token)
 
-    render json: { error: 'Not authenticated or invalid token' }, status: :unauthorized unless @current_user
+    unless @current_user
+      render json: { status: 'error', message: 'Not authenticated or invalid token' },
+             status: :unauthorized
+    end
   end
 
   def record_not_found
-    render json: { error: 'Record not found' }, status: :not_found
+    render json: { status: 'error', message: 'Record not found' }, status: :not_found
   end
 
   def auth_token
@@ -20,7 +23,7 @@ class Api::V1::ApplicationController < ActionController::API
     if auth_header
       auth_header.split(' ').last
     else
-      render json: { error: 'Missing Authorization header' }, status: :unauthorized
+      render json: { status: 'error', message: 'Missing Authorization header' }, status: :unauthorized
     end
   end
 end

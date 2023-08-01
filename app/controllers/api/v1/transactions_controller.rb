@@ -2,13 +2,13 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
   before_action :set_wallet
 
   def transfer
-    @transaction = @wallet.transactions.build(transaction_params.merge(type: 'CreditTransaction'))
-
-    if @transaction.save
-      render json: @transaction, status: :created
+    if @wallet.transfer(params[:target_wallet_id], params[:amount])
+      render json: { message: 'Transfer successful' }, status: :created
     else
-      render json: @transaction.errors, status: :unprocessable_entity
+      render json: { status: 'error', message: @wallet.errors.full_messages.join(', ') }, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { status: 'error', message: e.message }, status: :unprocessable_entity
   end
 
   def withdraw
