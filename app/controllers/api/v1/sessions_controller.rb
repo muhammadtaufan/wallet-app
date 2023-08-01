@@ -1,16 +1,19 @@
 class Api::V1::SessionsController < Api::V1::ApplicationController
+  skip_before_action :authenticate_user, only: [:create]
+
   def create
     user = User.find_by(email: params[:email])
     if user&.authenticate(params[:password])
-      session[:user_id] = user.id
-      render json: { status: 'OK', message: 'Sign in successful' }
+      user.generate_token
+      user.save!
+      render json: { status: 'OK', message: 'Sign in successful', token: user.token }
     else
       render json: { status: 'error', message: 'Invalid email or password' }, status: :unauthorized
     end
   end
 
   def destroy
-    session.delete(:user_id)
+    @current_user.invalidate_auth_token
     render json: { status: 'OK', message: 'Sign out successful' }
   end
 end

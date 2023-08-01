@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_114521) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_01_065951) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,12 +28,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_114521) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.decimal "amount"
+    t.bigint "source_wallet_id", null: false
+    t.bigint "target_wallet_id", null: false
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_wallet_id"], name: "index_transactions_on_source_wallet_id"
+    t.index ["target_wallet_id"], name: "index_transactions_on_target_wallet_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "token"
   end
 
   create_table "wallets", force: :cascade do |t|
@@ -45,4 +57,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_114521) do
     t.index ["walletable_type", "walletable_id"], name: "index_wallets_on_walletable"
   end
 
+  add_foreign_key "transactions", "wallets", column: "source_wallet_id"
+  add_foreign_key "transactions", "wallets", column: "target_wallet_id"
 end
