@@ -21,6 +21,16 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
     end
   end
 
+  def topup
+    amount = params[:amount].to_f
+
+    if @wallet.topup(amount)
+      render json: { status: 'success', message: 'Topup successful' }
+    else
+      render json: { status: 'error', message: 'Topup failed' }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_wallet

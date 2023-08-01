@@ -1,4 +1,3 @@
-# app/models/concerns/walletable.rb
 module Walletable
   extend ActiveSupport::Concern
 

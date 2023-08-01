@@ -20,4 +20,15 @@ class Wallet < ApplicationRecord
       save!
     end
   end
+
+  def topup(amount)
+    with_lock do
+      ActiveRecord::Base.transaction do
+        credit_transactions.create!(amount: amount, source_wallet: self)
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      errors.add(:base, "Failed to topup: #{e.message}")
+      raise ActiveRecord::Rollback
+    end
+  end
 end

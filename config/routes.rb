@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :transactions, only: [] do
         post ':wallet_id/transfer', to: 'transactions#transfer', on: :collection
         post ':wallet_id/withdraw', to: 'transactions#withdraw', on: :collection
+        post ':wallet_id/topup', to: 'transactions#topup', on: :collection
       end
     end
   end
