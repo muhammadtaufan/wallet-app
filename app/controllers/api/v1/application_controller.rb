@@ -1,6 +1,8 @@
 class Api::V1::ApplicationController < ActionController::API
   before_action :authenticate_user
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
+
   rescue_from ArgumentError, with: :handle_argument_error
   rescue_from StandardError, with: :handle_standard_error
 
@@ -18,6 +20,10 @@ class Api::V1::ApplicationController < ActionController::API
 
   def record_not_found
     render json: { status: 'error', message: 'Record not found' }, status: :not_found
+  end
+
+  def record_invalid
+    render json: { status: 'error', message: 'Something is wrong. Please try again later.' }, status: :unprocessable_entity
   end
 
   def auth_token
