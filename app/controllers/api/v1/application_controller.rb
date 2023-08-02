@@ -23,7 +23,8 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   def record_invalid
-    render json: { status: 'error', message: 'Something is wrong. Please try again later.' }, status: :unprocessable_entity
+    render json: { status: 'error', message: 'Something is wrong. Please try again later.' },
+           status: :unprocessable_entity
   end
 
   def auth_token

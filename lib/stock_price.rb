@@ -1,10 +1,12 @@
 require 'net/http'
 require 'uri'
+require_relative 'http_client'
 
 module StockPrice
   API_HOST = ENV.fetch('STOCK_API_HOST') { 'localhost' }
   API_KEY = ENV.fetch('STOCK_API_KEY') { 'api_key' }
   INDICES = ['NIFTY 50', 'NIFTY NEXT 50', 'NIFTY BANK', 'NIFTY 100', 'NIFTY 500'].freeze
+  HTTP_CLIENT = HttpClient.new(API_HOST, { 'X-RapidAPI-Key' => API_KEY })
 
   class Stock
     attr_reader :symbol, :open, :day_high, :day_low, :last_price
@@ -19,21 +21,18 @@ module StockPrice
 
     def self.price(symbol)
       validate_symbol(symbol)
-      api_path = "/price?Indices=#{symbol}"
-      response = request(api_path)
+      response = request('/price', { 'Indices' => symbol })
       response.map { |data| Stock.new(data) }
     end
 
     def self.prices(symbols)
       symbols.each { |symbol| validate_symbol(symbol) }
-      api_path = "/price?Indices=#{symbols.join(',')}"
-      response = request(api_path)
+      response = request('/price', { 'Indices' => symbols.join(',') })
       response.map { |data| Stock.new(data) }
     end
 
     def self.price_all
-      api_path = '/any'
-      response = request(api_path)
+      response = request('/any')
       response.map { |data| Stock.new(data) }
     end
 
@@ -41,13 +40,8 @@ module StockPrice
       raise ArgumentError, "Invalid symbol: #{symbol}" unless INDICES.include?(symbol)
     end
 
-    def self.request(api_path)
-      uri = URI.parse("#{API_HOST}#{api_path}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      request = Net::HTTP::Get.new(uri.request_uri, { 'X-RapidAPI-Key' => API_KEY })
-      response = http.request(request)
-      JSON.parse(response.body)
+    def self.request(api_path, params = {})
+      HTTP_CLIENT.get(api_path, params)
     end
   end
 end
