@@ -1,6 +1,8 @@
 class Api::V1::ApplicationController < ActionController::API
   before_action :authenticate_user
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from ArgumentError, with: :handle_argument_error
+  rescue_from StandardError, with: :handle_standard_error
 
   private
 
@@ -25,5 +27,13 @@ class Api::V1::ApplicationController < ActionController::API
     else
       render json: { status: 'error', message: 'Missing Authorization header' }, status: :unauthorized
     end
+  end
+
+  def handle_argument_error(e)
+    render json: { status: 'error', message: e.message }, status: :bad_request
+  end
+
+  def handle_standard_error(_e)
+    render json: { status: 'error', message: 'Failed to fetch the stock price' }, status: :internal_server_error
   end
 end
