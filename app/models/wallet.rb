@@ -49,4 +49,8 @@ class Wallet < ApplicationRecord
       raise ActiveRecord::Rollback
     end
   end
+
+  def sum_balance
+    credit_transactions.sum(:amount) - debit_transactions.sum(:amount)
+  end
 end

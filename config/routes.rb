@@ -8,6 +8,7 @@ Rails.application.routes.draw do
         post ':wallet_id/transfer', action: 'transfer'
         post ':wallet_id/withdraw', action: 'withdraw'
         post ':wallet_id/topup', action: 'topup'
+        get ':wallet_id/balance', action: 'balance'
       end
 
       namespace :stocks do

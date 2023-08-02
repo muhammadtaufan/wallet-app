@@ -16,6 +16,7 @@ This project is a Wallet Transactional API built with Ruby on Rails and PostgreS
 - `POST /api/v1/transactions/:wallet_id/transfer` - Transfer money from one wallet to another
 - `POST /api/v1/transactions/:wallet_id/withdraw` - Simple Withdraw money from a wallet
 - `POST /api/v1/transactions/:wallet_id/topup` - Top up a wallet
+- `GET /api/v1/transactions/:wallet_id/balance` - Get wallet balance
 - `GET /api/v1/stocks/price` - Get the price of a specific stock
 - `GET /api/v1/stocks/prices` - Get the prices of multiple stocks
 - `GET /api/v1/stocks/price_all` - Get the prices of all stocks
