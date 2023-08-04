@@ -10,8 +10,7 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
   end
 
   def withdraw
-    @transaction = @wallet.transactions.build(transaction_params.merge(type: 'DebitTransaction'))
-
+    @transaction = @wallet.debit_transactions.build(transaction_params.merge(type: 'DebitTransaction'))
     if @transaction.save
       render json: { status: 'success', data: @transaction, message: 'Transfer successful' }, status: :created
     else
@@ -41,6 +40,6 @@ class Api::V1::TransactionsController < Api::V1::ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:amount, :target_wallet_id)
+    params.permit(:amount, :target_wallet_id)
   end
 end

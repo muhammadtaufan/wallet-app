@@ -13,7 +13,7 @@ class Api::V1::SessionsController < Api::V1::ApplicationController
   end
 
   def destroy
-    @current_user.invalidate_auth_token
+    current_user.invalid_token
     render json: { status: 'success', message: 'Sign out successful' }
   end
 end

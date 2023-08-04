@@ -14,7 +14,7 @@ class Wallet < ApplicationRecord
   def debit(amount)
     # do the pesimistic locking instead
     with_lock do
-      raise ActiveRecord::Rollback unless balance >= amount
+      return false unless balance >= amount
 
       self.balance -= amount
       save!
@@ -34,7 +34,7 @@ class Wallet < ApplicationRecord
 
   def transfer(target_wallet_id, amount)
     with_lock do
-      if balance < amount
+      if balance < amount.to_f
         errors.add(:base, 'Insufficient balance')
         return false
       end

@@ -9,13 +9,14 @@ class Api::V1::ApplicationController < ActionController::API
   private
 
   def authenticate_user
-    token = auth_token
-    @current_user = User.find_by(token: token)
-
     unless @current_user
       render json: { status: 'error', message: 'Not authenticated or invalid token' },
              status: :unauthorized
     end
+  end
+
+  def current_user
+    @current_user ||= User.find_by(token: auth_token)
   end
 
   def record_not_found
@@ -41,6 +42,7 @@ class Api::V1::ApplicationController < ActionController::API
   end
 
   def handle_standard_error(_e)
-    render json: { status: 'error', message: 'Failed to fetch the stock price' }, status: :internal_server_error
+    render json: { status: 'error', message: 'Something is wrong. Please try again later.' },
+           status: :internal_server_error
   end
 end
